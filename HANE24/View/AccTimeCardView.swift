@@ -6,87 +6,78 @@
 //
 
 import SwiftUI
-
+/// text: String - 뷰 왼쪽에 나타날 문자열
+/// time: Int64 - 시간 (초 / sec)
+/// isColored: Bool - 뷰 색상 여부
+/// viewColor: Color - 뷰 내부 색상
 struct AccTimeCardView: View {
     @State var text: String
-    @State var time: Int64 = 0
-    @State var color: Color = Color(.white)
-//    @State var textcolor: Color = color == Color(.white) ? Color(.black) : Color(.white)
+    @State var accTime: Int64
+    @State var isColored: Bool = false
+    @State var viewColor: Color = Color(.white)
     @State var isFold: Bool = true
+    @State var targetTime: Int64 = 3600 * 8
     
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 20)
-                .foregroundColor(color)
-            VStack(spacing: 10) {
-                HStack(){
+                .foregroundColor(isFold ? viewColor : .white)
+            
+            VStack(spacing: 18) {
+                HStack {
                     Text(text)
                         .font(.system(size: 16, weight: .bold))
                     Spacer()
-                    HStack(alignment: .center, spacing: 1){
-                        Text("\(time / 3600)")
-                            .font(.system(size: 20, weight: .semibold))
-                        Text("시간")
-                            .font(.system(size: 16, weight: .semibold))
-                        Text("\(time % 3600 / 60)")
-                            .font(.system(size: 20, weight: .semibold))
-                        Text("분")
-                            .font(.system(size: 16, weight: .semibold))
-                    }
-                    Button {
-                        isFold.toggle()
-                    } label: {
-                        Image(systemName: "chevron.right")
-                            .rotationEffect(isFold ? Angle(degrees: 0) : Angle(degrees: 90))
-                    }
+                    Text("\(accTime / 3600)시간 \(accTime % 3600 / 60)분")
+                    Image(systemName: "chevron.right")
+                        .rotationEffect(isFold ? Angle(degrees: 0) : Angle(degrees: 90))
                 }
-                .foregroundColor(.black)
-               // .fontWeight(.semibold)
+                .foregroundColor(isFold && isColored ? .white : .black)
+                .font(.system(size: 16, weight: .semibold))
                 .padding()
+                .onTapGesture {
+//                    withAnimation {
+                        isFold.toggle()
+//                    }
+                }
+                
                 if !isFold {
                     VStack {
                         HStack {
                             Text("목표 시간")
                             Spacer()
-                            Text("\(time / 3600)시간 \(time % 3600 / 60)분")
+                            Text("\(targetTime / 3600)시간")
                             Image(systemName: "chevron.right")
-                                .foregroundColor(color)
+                                .foregroundColor(isFold ? viewColor : .white)
                         }
-                        .foregroundColor(.black)
-                        //.fontWeight(.semibold)
+                        .foregroundColor(isFold && isColored ? .white : .black)
+                        .font(.system(size: 16, weight: .semibold))
                         .padding(.horizontal)
+                        
                         ProgressCircle
                             .frame(width: 120, height: 120)
+                            .padding(.bottom, 10)
                     }
                 }
             }
             .padding()
         }
-        //.padding()
-        .frame(maxHeight: isFold ? 80 : 243)
+        .frame(height: isFold ? 80 : 260, alignment: .top)
         .padding(.horizontal, 30)
     }
     
-    let progress: Double = 0.7
+//    let progress: Double = Double(accTime) / Double(targetTime)
     var ProgressCircle: some View {
+                                
         ZStack{
-            if progress >= 1 {
-                Text("100%")
-                    .font(.system(size: 30, weight: .medium, design: .default))
-                    .foregroundColor(.black)
-            } else {
-                Text("\(Int(progress * 100))%")
-                    .font(.system(size: 30, weight: .medium, design: .default))
-                    .foregroundColor(.black)
-            }
+            Text("\(Int(Double(accTime) / Double(targetTime) * 100))%")
+                .font(.system(size: 30, weight: .medium, design: .default))
+                .foregroundColor(.black)
             Circle()
-                .stroke(
-                    Color(UIColor.systemGray3).opacity(0.5),
-                    lineWidth: 13
-                )
+                .stroke(Color(UIColor.systemGray3).opacity(0.5), lineWidth: 16)
             Circle()
-                .trim(from:0, to: (progress))
-                .stroke(.blue, style: StrokeStyle(lineWidth: 13, lineCap: .round))
+                .trim(from:0, to: (Double(accTime) / Double(targetTime)))
+                .stroke(LinearGradient(gradient: Gradient(colors: [.gradientBlue, .gradientPurple]), startPoint: .top, endPoint: .bottom), style: StrokeStyle(lineWidth: 16, lineCap: .round))
                 .rotationEffect(.degrees(270))
         }
     }
@@ -121,7 +112,7 @@ extension View {
 
 struct AccTimeCardView_Previews: PreviewProvider {
     static var previews: some View {
-//        AccTimeCardView(text: "이용 시간", time: 77777)
-        AccTimeCardView(text: "이용 시간", time: 77777, color: Color(hex: "#735BF2"))
+        AccTimeCardView(text: "이용 시간", accTime: 3600 * 4 + 120)
+        AccTimeCardView(text: "이용 시간", accTime: 77777, isColored: true, viewColor: Color(hex: "#735BF2"))
     }
 }

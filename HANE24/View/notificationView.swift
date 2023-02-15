@@ -28,8 +28,8 @@ struct notificationView: View {
                             })
                             Text("알림")
                                 .font(.system(size: 20, weight: .bold))
-                                .padding(.leading, 128)
-                                .padding(.trailing, 177)
+                                .padding(.leading, 120)
+                                .padding(.trailing, 170)
                         }
                         Text("알림 내역이 비어있습니다.💌 ")
                             .padding()
