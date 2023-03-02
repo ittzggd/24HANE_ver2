@@ -17,7 +17,7 @@ struct TagLogView: View {
         let dailyTotalTime = hane.dailyTotalTimesInAMonth[selectedDate.dayToInt]
         VStack(alignment:.center, spacing: 4) {
             HStack{
-                Text("\(selectedDate.monthToInt).\(selectedDate.dayToInt) 일요일")
+                Text("\(selectedDate.monthToInt).\(selectedDate.dayToInt) \(selectedDate.toString("E"))요일")
                     .padding(.leading, 5)
                 Spacer()
                 Text("\(dailyTotalTime / 3600)시간 \((dailyTotalTime % 3600) / 60)분")
@@ -60,10 +60,7 @@ struct TagLogView: View {
                 }
                 .frame(maxHeight: 230)
             }
-            
-            
         }
-        
     }
     
     @ViewBuilder

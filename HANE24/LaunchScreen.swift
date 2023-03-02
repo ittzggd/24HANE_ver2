@@ -12,8 +12,9 @@ struct LaunchScreen: View {
     var body: some View {
         ZStack(alignment: .center){
             Theme.BackgoundColor(forScheme: colorScheme)
-                .ignoresSafeArea()
-            Image(colorScheme == .light ? "LaunchLogo" : "LaunchLogoDark")
+                .edgesIgnoringSafeArea(.all)
+            Image(colorScheme == .light ? "LaunchScreen_light" : "LaunchScreen_dark")
+                .ignoresSafeArea(.all)
         }
     }
 }

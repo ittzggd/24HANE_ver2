@@ -30,7 +30,6 @@ class MonthlyLogController {
         do {
             totalLogs = try container.viewContext.fetch(request)
         } catch {
-            print(error)
             print("Unresolved error \(error.localizedDescription)")
         }
     }
@@ -39,11 +38,11 @@ class MonthlyLogController {
     /// - Parameters:
     ///   - date: format: "yyyy.MM"
     ///   - inOutLogs: just a Month
-    func addLogs(date: String, inOutLogs: [InOutLog]) {
+    func addLogs(date: String, inOutLogs: [InOutLog], needUpdate: Bool = true) {
         let monthlyLog = MonthlyLog(context: container.viewContext)
         let data = InOutLogs(data: inOutLogs)
         
-        monthlyLog.needUpdate = true
+        monthlyLog.needUpdate = needUpdate
         monthlyLog.date = date
         monthlyLog.inOutLogs = data
         saveData()
@@ -55,12 +54,22 @@ class MonthlyLogController {
     ///   - entity: MonthlyLog Object
     ///   - needUpdate: need update after this API call?
     ///   - inOutLogs: Data from API
-    func updateLogs(entity: MonthlyLog, needUpdate: Bool = true, inOutLogs: [InOutLog]) {
+    func updateLogs(entity: MonthlyLog, inOutLogs: [InOutLog], needUpdate: Bool = true) {
         let data = InOutLogs(data: inOutLogs)
         
         entity.needUpdate = needUpdate
         entity.inOutLogs = data
         saveData()
+    }
+    
+    func resetLogs() {
+//        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MonthlyLog")
+//        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+
+        totalLogs.forEach {
+            container.viewContext.delete($0)
+        }
+    
     }
     
     func deleteLogs(indexSet: IndexSet) {

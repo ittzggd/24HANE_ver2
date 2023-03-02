@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct PopulationView: View {
+    @EnvironmentObject var hane: Hane
     var body: some View {
         VStack(alignment: .center, spacing: 8) {
             HStack{
@@ -26,9 +27,12 @@ struct PopulationView: View {
                             .font(.system(size: 16, weight: .semibold))
                             .padding(.trailing, 20)
                             .foregroundColor(.black)
-                        Text("\(420)명")
-                            .font(.system(size: 16, weight: .semibold))
+                        Text("\(hane.clusterPopulation.gaepo)")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundColor(.black)
                             .padding(.leading, 20)
+                        Text("명")
+                            .font(.system(size: 16, weight: .semibold))
                             .foregroundColor(.black)
                     }
                 }
@@ -41,10 +45,14 @@ struct PopulationView: View {
                             .font(.system(size: 16, weight: .semibold))
                             .padding(.trailing, 20)
                             .foregroundColor(.black)
-                        Text("\(240)명")
-                            .font(.system(size: 16, weight: .semibold))
-                            .padding(.leading, 20)
+                        Text("\(hane.clusterPopulation.seocho)")
+                            .font(.system(size: 18, weight: .semibold))
                             .foregroundColor(.black)
+                            .padding(.leading, 20)
+                        Text("명")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.black)
+
                     }
                 }
             }
@@ -55,5 +63,6 @@ struct PopulationView: View {
 struct PopulationView_Previews: PreviewProvider {
     static var previews: some View {
         PopulationView()
+            .environmentObject(Hane())
     }
 }

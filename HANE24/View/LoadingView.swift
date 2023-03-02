@@ -14,13 +14,13 @@ struct LoadingView: View {
         ZStack {
             Theme.CalendarBackgoundColor(forScheme: colorScheme)
                 .edgesIgnoringSafeArea(.all)
-            if colorScheme == .light {
-                Image("LaunchScreen_light")
+//            if colorScheme == .light {
+                Image("LaunchScreen")
                     .ignoresSafeArea(.all)
-            } else {
-                Image("LaunchScreen_dark")
-                    .ignoresSafeArea(.all)
-            }
+//            } else {
+//                Image("LaunchScreen_dark")
+//                    .ignoresSafeArea(.all)
+//            }
         }
     }
 }

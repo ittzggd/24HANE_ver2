@@ -28,26 +28,30 @@ struct PerMonth: Codable {
 struct MainInfo: Codable {
     let login: String
     let profileImage: String
+    let isAdmin: Bool
     let inoutState: String
     let tagAt: String?
+    let gaepo: Int
+    let seocho: Int
 }
 
 struct AccumulationTimes: Codable {
-    let todayAccumationTime: Int64
-    let monthAccumationTime: Int64
+    let todayAccumulationTime: Int64
+    let monthAccumulationTime: Int64
+    let sixWeekAccumulationTime: [Double]
+    let sixMonthAccumulationTime: [Double]
+}
+
+struct ReissueState: Codable {
+    let state: String
 }
 
 
 // for CoreData
-public class InOutLogs: NSObject {
+public class InOutLogs: NSSecureUnarchiveFromDataTransformer {
     var data: [InOutLog]
     
     init(data: [InOutLog]) {
         self.data = data
     }
-}
-
-struct ClusterTmp: Codable {
-    let GaePo: Int64
-    let Seocho: Int64
 }

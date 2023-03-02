@@ -11,12 +11,13 @@ import CoreData
 struct ContentView: View {
     
     @EnvironmentObject var hane: Hane
+    @ObservedObject var networkManager = NetworkManager()
     @State var signInChecked = false
 
     var body: some View {
         ZStack{
             if !signInChecked {
-                LaunchScreen()
+                LoadingView()
             } else {
                 switch hane.isSignIn{
                 case false:
@@ -34,6 +35,13 @@ struct ContentView: View {
                 print("Invalid URL")
             }
 
+        }
+        .alert(isPresented: $networkManager.showAlert){
+            Alert(title: Text("Error"), message: Text("네트워크 연결 상태를 확인해주세요."),
+            dismissButton: .default(Text("다시시도"), action: {
+                networkManager.monitoringNetwork{ isConnected in
+                }
+            }))
         }
     }
 

@@ -48,11 +48,9 @@ struct SignInWebView: UIViewRepresentable {
         }
         
         func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-            print("load web view")
         }
         
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-            print("finished load")
             if self.viewStat.wrappedValue == .buttonTabbed {
                 self.viewStat.wrappedValue = .readyToSignIn
             } else {
@@ -64,7 +62,6 @@ struct SignInWebView: UIViewRepresentable {
             let urlToMatch =  "/user/login/callback/42"
             
             if  let urlStr = navigationAction.request.url?.path, urlStr == urlToMatch {
-                print("before cookie")
                 WKWebsiteDataStore.default().httpCookieStore.getAllCookies{ (cookies) in
                     for cookie in cookies{
                         if cookie.name == "accessToken"{

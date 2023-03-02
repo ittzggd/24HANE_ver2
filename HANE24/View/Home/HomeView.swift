@@ -7,17 +7,34 @@
 
 import SwiftUI
 
-struct chartItem: Identifiable {
-    var id: String
-    var title: String
-    var period: Array<String>
-    var data: Array<Double>
+func getWeeklyPeriod() -> [String]{
+    var weeklyPeriod:[String] = []
+    var date = Date()
+    let formatter = DateFormatter()
+    formatter.locale = Locale(identifier: "ko_KR")
+    formatter.dateFormat = "M.dd(EEE)"
+    for _ in 0..<6 {
+        let startDay = formatter.string(from: date.startOfWeek!)
+        let endDay = formatter.string(from: date.endOfWeek!)
+        let period = startDay + "-" + endDay
+        weeklyPeriod.append(period)
+        date = Calendar.current.date(byAdding: .weekOfYear, value: -1, to: date)!
+    }
+    return weeklyPeriod
 }
 
-var items: [chartItem] = [
-    chartItem(id: "주", title: "최근 주간 그래프", period: ["1.2(월)-1.8(일)","1.9(월)-1.15(일)","1.16(월)-1.22(일)","1.23(월)-1.29(일)","1.30(월)-2.5(일)","2.6(월)-2.12(일)"], data:  [42, 20, 41, 33, 59, 50]),
-    chartItem(id: "월", title: "최근 월간 그래프", period: ["2023.2","2023.1","2022.12","2022.11","2022.10", "2022.10"], data:  [132, 100, 121, 123, 139, 120])
-]
+func getMonthlyPeriod() -> [String] {
+    var monthlyPeriod:[String] = []
+    var date = Date()
+    let formatter = DateFormatter()
+    formatter.dateFormat = "YYYY.M"
+    for _ in 0..<6 {
+        let period = formatter.string(from: date)
+        monthlyPeriod.append(period)
+        date = Calendar.current.date(byAdding: .month, value: -1, to: date)!
+    }
+    return monthlyPeriod
+}
 
 var dailyOptions: Array<Double> = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
 var monthlyOptions: Array<Double> = [80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300]
@@ -88,10 +105,11 @@ struct HomeView: View {
                                 .padding(.trailing, 3)
                                 .clipShape(Circle())
                         } placeholder: {
-                            Image("cabi")
+                            Image(systemName: "person.circle")
                                 .resizable()
                                 .frame(width: 28, height: 28)
                                 .padding(.trailing, 3)
+                                .foregroundColor(.iconColor)
                         }
                         
                         Text(hane.loginID)
@@ -108,7 +126,7 @@ struct HomeView: View {
                         Spacer()
                         
                         NavigationLink(destination: notificationView()) {
-                            Image(systemName: "bell")
+                            Image("notification")
                                 .resizable()
                                 .frame(width: 24, height: 24)
                                 .foregroundColor(test ? .iconColor : .red)
@@ -138,11 +156,11 @@ struct HomeView: View {
                                 UserDefaults.standard.setValue(selection, forKey: "MonthlySelectionOption")
                             }
                                 .padding(.horizontal, 30)
-                            
+
                             TabView{
-                                ChartView(item: items[0])
+                                ChartView(item: ChartItem(id: "주", title: "최근 주간 그래프", period: getWeeklyPeriod(), data: hane.sixWeekAccumulationTime))
                                     .padding(.horizontal, 10)
-                                ChartView(item: items[1])
+                                ChartView(item: ChartItem(id: "개월", title: "최근 월간 그래프", period: getMonthlyPeriod(), data: hane.sixMonthAccumulationTime))
                                     .padding(.horizontal, 10)
                             }
                             .padding(.horizontal, 20)

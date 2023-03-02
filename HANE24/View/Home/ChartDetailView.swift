@@ -7,6 +7,11 @@
 
 import SwiftUI
 
+func  numOfDays(selection: Int) -> Double{
+    let date =  Calendar.current.date(byAdding: .month, value: -selection, to: Date())!
+    return Double(date.nubmerOfDays)
+}
+
 struct ChartDetailView: View {
     @Binding var selectedChart: Int
     var id: String
@@ -34,7 +39,7 @@ struct ChartDetailView: View {
                         .foregroundColor(.white)
                         .font(.system(size: 12, weight: .semibold))
                     Spacer()
-                    Text("총 \(time, specifier: "%.0f")시간")
+                    Text("총 \((time / 3600), specifier: "%.1f")시간")
                         .foregroundColor(.white)
                         .font(.system(size: 12, weight: .semibold))
 
@@ -46,11 +51,11 @@ struct ChartDetailView: View {
                         .foregroundColor(.white)
                         .font(.system(size: 12, weight: .semibold))
                     if id == "주" {
-                        Text("\(time / 7, specifier: "%.1f")시간")
+                        Text("\((time / 3600) / 7, specifier: "%.1f")시간")
                             .foregroundColor(.white)
                             .font(.system(size: 12, weight: .semibold))
                     } else {
-                        Text("\(time / 7, specifier: "%.1f")시간")
+                        Text("\((time / 3600) / (numOfDays(selection: selectedChart)), specifier: "%.1f")시간")
                         .foregroundColor(.white)
                         .font(.system(size: 12, weight: .semibold))
                     }
@@ -65,6 +70,6 @@ struct ChartDetailView: View {
 
 struct ChartDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        ChartDetailView(selectedChart: .constant(3), id: "월", time: 142, period: "1.2(월)-1.8(일)")
+        ChartDetailView(selectedChart: .constant(3), id: "월", time: 1800, period: "1.2(월)-1.8(일)")
     }
 }

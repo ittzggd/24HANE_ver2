@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "home-office-gc98225188_1920.PNG",
+      "filename" : "home_office.PNG",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "home_office 1.PNG",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "home_office 2.PNG",
       "idiom" : "universal",
       "scale" : "3x"
     }

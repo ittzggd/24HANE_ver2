@@ -50,6 +50,7 @@ extension Date {
     }
     func toString(_ format: String) -> String {
         let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "ko_KR")
         dateFormatter.dateFormat = format
         return dateFormatter.string(from: self)
     }
@@ -92,5 +93,36 @@ extension Date {
     }
     init(milliseconds: Int64) {
         self = Date(timeIntervalSince1970: TimeInterval(milliseconds))
+    }
+}
+
+extension Date {
+    var startOfWeek: Date? {
+        let gregorian = Calendar(identifier: .gregorian)
+        guard let startDay = gregorian.date(from: gregorian.dateComponents([.yearForWeekOfYear, .weekOfYear], from: self)) else { return nil }
+        return gregorian.date(byAdding: .day, value: 1, to: startDay)
+    }
+    var endOfWeek: Date? {
+        let gregorian = Calendar(identifier: .gregorian)
+            guard let startDay = gregorian.date(from: gregorian.dateComponents([.yearForWeekOfYear, .weekOfYear], from: self)) else { return nil }
+           return gregorian.date(byAdding: .day, value: 7, to: startDay)
+       }
+
+}
+
+extension Date{
+    var nubmerOfDays: Int {
+        let calendar = Calendar.current
+        let myDateComponents = DateComponents(year: self.yearToInt, month: self.monthToInt)
+        
+        let startOfMonth = calendar.date(from: myDateComponents)
+        
+        let nextMonth = calendar.date(byAdding: .month, value:+1, to: startOfMonth!)
+        
+        let endOfMonth = calendar.date(byAdding: .day, value: -1,  to: nextMonth!)
+        
+        let comp2 = calendar.dateComponents([.day, .weekday, .weekOfMonth], from: endOfMonth!)
+        
+        return comp2.day!
     }
 }
