@@ -9,7 +9,7 @@ import WidgetKit
 import Foundation
 import SwiftUI
 
-//var needToSignIn: Bool = false
+var needToSignIn: Bool = false
 
 struct Provider: TimelineProvider {
 
@@ -29,7 +29,7 @@ struct Provider: TimelineProvider {
         let currentDate = Date()
         let entry = SimpleEntry(date: Date(),
                                 accTimes: MonthlyAccumulationTimes(totalAccumulationTime: times.totalAccumulationTime, acceptedAccumulationTime: times.acceptedAccumulationTime))
-        let nextRefresh = Calendar.current.date(byAdding: .minute, value: 1, to: currentDate)!
+        let nextRefresh = Calendar.current.date(byAdding: .hour, value: 1, to: currentDate)!
         let timeline = Timeline(entries: [entry], policy: .after(nextRefresh))
         completion(timeline)
         }
@@ -41,23 +41,25 @@ struct Provider: TimelineProvider {
         let month = URLQueryItem(name: "month", value: "\(12)")
         components.queryItems = [year, month]
         guard let token = getAccessToken() else {
-//            needToSignIn = true
+            needToSignIn = true
             print("invalid Token")
             return
         }
         print("token: ", token)
-//        needToSignIn = false
         var request = URLRequest(url: components.url!)
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = [
             "Authorization": "Bearer \(String(describing: token))"
         ]
-        URLSession.shared.dataTask(with: request) {data, response, error in
+        URLSession.shared.dataTask(with: request) {data, _, _ in
             guard let data = data,
-                  let accTimes = try? JSONDecoder().decode(MonthlyAccumulationTimes.self, from: data) else { return }
+                  let accTimes = try? JSONDecoder().decode(MonthlyAccumulationTimes.self, from: data) else {
+                needToSignIn = true
+                return
+            }
             completion(accTimes)
         }.resume()
-
+        needToSignIn = true
     }
 
     private func getAccessToken() -> String? {
