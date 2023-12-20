@@ -14,35 +14,37 @@ struct Provider: TimelineProvider {
 
     func placeholder(in context: Context) -> SimpleEntry {
         SimpleEntry(date: Date(),
-                    accTimes: MonthlyAccumulationTimes(totalAccumulationTime: 123456, acceptedAccumulationTime: 12345))
+                    accTimes: MonthlyAccumulationTimes(totalAccumulationTime: 123456,
+                                                       acceptedAccumulationTime: 12345), isTokenValid: true)
     }
 
-    func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> Void) { getMonthlyAccTime { times in
+    func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> Void) { getMonthlyAccTime { (result, times) in
         let entry = SimpleEntry(date: Date(),
                                 accTimes: MonthlyAccumulationTimes(totalAccumulationTime: times.totalAccumulationTime,
-                                                                   acceptedAccumulationTime: times.acceptedAccumulationTime))
+                                                                   acceptedAccumulationTime: times.acceptedAccumulationTime), isTokenValid: result)
         completion(entry)
         }
     }
 
-    func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> Void) { getMonthlyAccTime { times in
+    func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> Void) { getMonthlyAccTime { (result, times) in
         let currentDate = Date()
         let entry = SimpleEntry(date: Date(),
                                 accTimes: MonthlyAccumulationTimes(totalAccumulationTime: times.totalAccumulationTime, 
-                                                                   acceptedAccumulationTime: times.acceptedAccumulationTime))
+                                                                   acceptedAccumulationTime: times.acceptedAccumulationTime), isTokenValid: result)
         let nextRefresh = Calendar.current.date(byAdding: .hour, value: 1, to: currentDate)!
         let timeline = Timeline(entries: [entry], policy: .after(nextRefresh))
         completion(timeline)
         }
     }
 
-    private func getMonthlyAccTime(completion: @escaping((MonthlyAccumulationTimes) -> Void)) {
+    private func getMonthlyAccTime(completion: @escaping((Bool, MonthlyAccumulationTimes) -> Void)) {
         var components = URLComponents(string: "https://api-dev.24hoursarenotenough.42seoul.kr/v3/tag-log/getAllTagPerMonth")!
         let year = URLQueryItem(name: "year", value: "\(2023)")
         let month = URLQueryItem(name: "month", value: "\(12)")
         components.queryItems = [year, month]
         guard let token = getAccessToken() else {
             print("invalid Token")
+            completion(false, MonthlyAccumulationTimes(totalAccumulationTime: 0, acceptedAccumulationTime: 0))
             return
         }
         print("token: ", token)
@@ -54,9 +56,10 @@ struct Provider: TimelineProvider {
         URLSession.shared.dataTask(with: request) {data, _, _ in
             guard let data = data,
                   let accTimes = try? JSONDecoder().decode(MonthlyAccumulationTimes.self, from: data) else {
+                completion(false, MonthlyAccumulationTimes(totalAccumulationTime: 0, acceptedAccumulationTime: 0))
                 return
             }
-            completion(accTimes)
+            completion(true, accTimes)
         }.resume()
     }
 
@@ -68,13 +71,18 @@ struct Provider: TimelineProvider {
 struct SimpleEntry: TimelineEntry {
     let date: Date
     let accTimes: MonthlyAccumulationTimes
+    let isTokenValid: Bool
 }
 
 struct HANE24WidgetEntryView: View {
     var entry: Provider.Entry
 
     var body: some View {
-        showAccTimes
+        if entry.isTokenValid {
+            showAccTimes
+        } else {
+            tokenExpired
+        }
     }
 
     var showAccTimes: some View {
@@ -117,6 +125,16 @@ struct HANE24WidgetEntryView: View {
             .padding(.top, 12)
         }
     }
+    
+    var tokenExpired: some View {
+        VStack(alignment: .center) {
+            Text("인증 유효시간 초과")
+                .font(.system(size: 15, weight: .semibold))
+            Text("앱에서 다시 로그인을 진행해주세요")
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(Color.black.opacity(0.5))
+        }
+    }
 }
 
 struct HANE24Widget: Widget {
@@ -136,6 +154,6 @@ struct HANE24Widget: Widget {
 #Preview(as: .systemSmall) {
     HANE24Widget()
 } timeline: {
-    SimpleEntry(date: .now, accTimes: MonthlyAccumulationTimes(totalAccumulationTime: 123456, acceptedAccumulationTime: 12345))
-    SimpleEntry(date: .now, accTimes: MonthlyAccumulationTimes(totalAccumulationTime: 123456, acceptedAccumulationTime: 12345))
+    SimpleEntry(date: .now, accTimes: MonthlyAccumulationTimes(totalAccumulationTime: 123456, acceptedAccumulationTime: 12345), isTokenValid: true)
+    SimpleEntry(date: .now, accTimes: MonthlyAccumulationTimes(totalAccumulationTime: 123456, acceptedAccumulationTime: 12345), isTokenValid: true)
 }
