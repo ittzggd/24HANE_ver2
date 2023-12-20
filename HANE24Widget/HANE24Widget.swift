@@ -9,7 +9,6 @@ import WidgetKit
 import Foundation
 import SwiftUI
 
-var needToSignIn: Bool = false
 
 struct Provider: TimelineProvider {
 
@@ -20,15 +19,17 @@ struct Provider: TimelineProvider {
 
     func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> Void) { getMonthlyAccTime { times in
         let entry = SimpleEntry(date: Date(),
-                                accTimes: MonthlyAccumulationTimes(totalAccumulationTime: times.totalAccumulationTime, acceptedAccumulationTime: times.acceptedAccumulationTime))
+                                accTimes: MonthlyAccumulationTimes(totalAccumulationTime: times.totalAccumulationTime,
+                                                                   acceptedAccumulationTime: times.acceptedAccumulationTime))
         completion(entry)
         }
     }
 
-    func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> Void) { getMonthlyAccTime{ times in
+    func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> Void) { getMonthlyAccTime { times in
         let currentDate = Date()
         let entry = SimpleEntry(date: Date(),
-                                accTimes: MonthlyAccumulationTimes(totalAccumulationTime: times.totalAccumulationTime, acceptedAccumulationTime: times.acceptedAccumulationTime))
+                                accTimes: MonthlyAccumulationTimes(totalAccumulationTime: times.totalAccumulationTime, 
+                                                                   acceptedAccumulationTime: times.acceptedAccumulationTime))
         let nextRefresh = Calendar.current.date(byAdding: .hour, value: 1, to: currentDate)!
         let timeline = Timeline(entries: [entry], policy: .after(nextRefresh))
         completion(timeline)
@@ -41,7 +42,6 @@ struct Provider: TimelineProvider {
         let month = URLQueryItem(name: "month", value: "\(12)")
         components.queryItems = [year, month]
         guard let token = getAccessToken() else {
-            needToSignIn = true
             print("invalid Token")
             return
         }
@@ -54,12 +54,10 @@ struct Provider: TimelineProvider {
         URLSession.shared.dataTask(with: request) {data, _, _ in
             guard let data = data,
                   let accTimes = try? JSONDecoder().decode(MonthlyAccumulationTimes.self, from: data) else {
-                needToSignIn = true
                 return
             }
             completion(accTimes)
         }.resume()
-        needToSignIn = true
     }
 
     private func getAccessToken() -> String? {
@@ -76,18 +74,47 @@ struct HANE24WidgetEntryView: View {
     var entry: Provider.Entry
 
     var body: some View {
-        ZStack {
-            showAccTimes
-        }
+        showAccTimes
     }
 
     var showAccTimes: some View {
-        VStack {
-            Text("총 시간")
-            Text("\(entry.accTimes.totalAccumulationTime / 3600)")
+        VStack(alignment: .leading) {
+            HStack(alignment: .bottom, spacing: 7) {
+                Text("24HANE")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(Color(hex: "#735BF2"))
+                Text("\(entry.date.MM).\(entry.date.dd) \(entry.date.hourToString):\(entry.date.minuteToString) 기준")
+                    .font(.system(size: 9))
+                    .foregroundStyle(Color.black.opacity(0.35))
+            }
 
-            Text("인정 시간")
-            Text("\(entry.accTimes.acceptedAccumulationTime / 3600)")
+            HStack {
+                Rectangle()
+                    .frame(width: 2, height: 32)
+                    .foregroundStyle(Color(hex: "#333333"))
+                VStack(alignment: .leading) {
+                    Text("월 누적 시간")
+                        .font(.system(size: 15, weight: .semibold))
+                    Text("\(entry.accTimes.totalAccumulationTime / 3600) 시간 \(entry.accTimes.totalAccumulationTime % 3600 / 60) 분")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundStyle(Color.black.opacity(0.5))
+                }
+            }
+            .padding(.top, 18)
+
+            HStack {
+                Rectangle()
+                    .frame(width: 2, height: 32)
+                    .foregroundStyle(Color(hex: "#735BF2"))
+                VStack(alignment: .leading) {
+                    Text("인정 시간")
+                        .font(.system(size: 15, weight: .semibold))
+                    Text("\(entry.accTimes.acceptedAccumulationTime / 3600) 시간 \(entry.accTimes.acceptedAccumulationTime % 3600 / 60) 분")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundStyle(Color.black.opacity(0.5))
+                }
+            }
+            .padding(.top, 12)
         }
     }
 }

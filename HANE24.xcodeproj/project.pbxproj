@@ -18,6 +18,8 @@
 		0E165510299A5A82001E5EED /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E16550F299A5A82001E5EED /* HomeView.swift */; };
 		0E17EFAA299B5C0A0089BCD8 /* PopulationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E17EFA9299B5C0A0089BCD8 /* PopulationView.swift */; };
 		0E3B32A929A3815B001D10BF /* SignInWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E3B32A829A3815B001D10BF /* SignInWebView.swift */; };
+		0E5A0E442B333FC30001DDBA /* DateExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF730EC299CC54F00AF2E53 /* DateExtensions.swift */; };
+		0E5A0E452B333FC70001DDBA /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E165509299A3D8A001E5EED /* ColorExtension.swift */; };
 		0E6B608F29AC850D009D8BC4 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E6B608E29AC850D009D8BC4 /* NetworkManager.swift */; };
 		0E9868012B28CA8800E127DC /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E9868002B28CA8800E127DC /* WidgetKit.framework */; };
 		0E9868032B28CA8800E127DC /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E9868022B28CA8800E127DC /* SwiftUI.framework */; };
@@ -26,7 +28,6 @@
 		0E98680A2B28CA8800E127DC /* HANE24Widget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E9868092B28CA8800E127DC /* HANE24Widget.swift */; };
 		0E98680C2B28CA8900E127DC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0E98680B2B28CA8900E127DC /* Assets.xcassets */; };
 		0E9868102B28CA8900E127DC /* HANE24WidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 0E9867FF2B28CA8800E127DC /* HANE24WidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		0E9868162B28CAF300E127DC /* AccTimeStruct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E9868152B28CAF300E127DC /* AccTimeStruct.swift */; };
 		0E9868172B28CDBA00E127DC /* AccTimeStruct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E9868152B28CAF300E127DC /* AccTimeStruct.swift */; };
 		0E9868192B28D00700E127DC /* HANE24WidgetConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E9868182B28D00700E127DC /* HANE24WidgetConstant.swift */; };
 		0E98681A2B28D00700E127DC /* HANE24WidgetConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E9868182B28D00700E127DC /* HANE24WidgetConstant.swift */; };
@@ -95,7 +96,6 @@
 		0E3B32A729A37D3C001D10BF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		0E3B32A829A3815B001D10BF /* SignInWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInWebView.swift; sourceTree = "<group>"; };
 		0E6B608E29AC850D009D8BC4 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
-		0E7F32F22B185E2F0048290A /* env.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = env.xcconfig; sourceTree = "<group>"; };
 		0E9867FF2B28CA8800E127DC /* HANE24WidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HANE24WidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		0E9868002B28CA8800E127DC /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		0E9868022B28CA8800E127DC /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -190,7 +190,6 @@
 				9AF730F9299F539F00AF2E53 /* ViewModel */,
 				0E1654F6299A285E001E5EED /* Assets.xcassets */,
 				0E1654F8299A285E001E5EED /* Preview Content */,
-				0E85DCE12B26C1B600928B5B /* env.xcconfig */,
 			);
 			path = HANE24;
 			sourceTree = "<group>";
@@ -503,8 +502,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0E5A0E442B333FC30001DDBA /* DateExtensions.swift in Sources */,
 				0E9868082B28CA8800E127DC /* HANE24WidgetLiveActivity.swift in Sources */,
 				0E9868172B28CDBA00E127DC /* AccTimeStruct.swift in Sources */,
+				0E5A0E452B333FC70001DDBA /* ColorExtension.swift in Sources */,
 				0E98680A2B28CA8800E127DC /* HANE24Widget.swift in Sources */,
 				0E9868062B28CA8800E127DC /* HANE24WidgetBundle.swift in Sources */,
 				0E98681F2B28D2C200E127DC /* UserDefaultsExtension.swift in Sources */,
@@ -525,7 +526,6 @@
 /* Begin XCBuildConfiguration section */
 		0E165500299A285E001E5EED /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0E85DCE12B26C1B600928B5B /* env.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -586,7 +586,6 @@
 		};
 		0E165501299A285E001E5EED /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0E85DCE12B26C1B600928B5B /* env.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
