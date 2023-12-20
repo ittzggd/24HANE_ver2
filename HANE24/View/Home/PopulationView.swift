@@ -10,31 +10,29 @@ import SwiftUI
 struct PopulationView: View {
     @EnvironmentObject var hane: Hane
     var body: some View {
-        VStack(alignment: .center, spacing: 8) {
-            HStack {
-                Text("  실시간 현황")
-                    .font(.system(size: 18, weight: .semibold))
+        VStack(alignment: .leading, spacing: 8) {
+            Text("실시간 현황")
+                .font(.system(size: 18, weight: .bold))
 
-                Spacer()
-            }
-            HStack(spacing: 25) {
-                ZStack(alignment: .center) {
-                    RoundedRectangle(cornerRadius: 20)
-                        .foregroundColor(.white)
-                        .frame(width: 155, height: 80)
-                    HStack(alignment: .bottom, spacing: 0) {
-                        Text("서울")
-                            .font(.system(size: 16, weight: .semibold))
-                            .padding(.trailing, 20)
-                            .foregroundColor(.black)
-                        Text("\(hane.clusterPopulation)")
-                            .font(.system(size: 20, weight: .semibold))
-                            .foregroundColor(.black)
-                            .padding(.leading, 20)
-                        Text("명")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.black)
-                    }
+            ZStack(alignment: .center) {
+                RoundedRectangle(cornerRadius: 20)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 80)
+                HStack(alignment: .bottom, spacing: 0) {
+                    Text("서울")
+                        .font(.system(size: 16, weight: .bold))
+                        .padding(.horizontal, 20)
+                        .foregroundColor(.black)
+                    Spacer()
+                    Text("\(hane.clusterPopulation)")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundColor(.black)
+                        .padding(.leading, 20)
+                    Text("명")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundColor(.black)
+                        .padding(.trailing, 20)
                 }
             }
         }

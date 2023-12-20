@@ -7,7 +7,6 @@
 
 import Foundation
 import WebKit
-import CoreData
 
 enum MyError: Error {
     case tokenExpired(String)
@@ -57,6 +56,9 @@ class Hane: ObservableObject {
 
     /// 카드 재발급 상태
     @Published var reissueState: CardState = .none
+    
+    /// 선택일자
+    @Published var selectedDate: Date = .now
 
     /// Model
     var inOutLog: InOutLog
@@ -66,6 +68,8 @@ class Hane: ObservableObject {
     var cardReissueState: ReissueState
 
     var APIroot: String
+
+    var timer: Timer?
 
     init() {
         self.isInCluster = false
@@ -102,14 +106,20 @@ class Hane: ObservableObject {
         self.APIroot = "https://" + (Bundle.main.infoDictionary?["API_URL"] as? String ?? "wrong")
         self.reissueState = .none
         self.cardReissueState = ReissueState(state: "none")
+
+        self.timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            guard self.isInCluster else { return }
+            self.dailyAccumulationTime += 1
+        }
     }
 
     @MainActor
-    func refresh(date: Date) async throws {
+    func refresh() async throws {
         do {
             try await updateMainInfo()
             try await updateAccumulationTime()
-            try await updateMonthlyLogs(date: date)
+            try await updateMonthlyLogs(date: selectedDate)
         } catch {
             self.isSignIn = false
         }

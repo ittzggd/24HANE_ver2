@@ -140,3 +140,37 @@ extension Date {
         Calendar.current.isDate(self, equalTo: day, toGranularity: .day)
     }
 }
+
+extension Date {
+    var firstDay: Date {
+        let cal = Calendar.current
+        let dateComponents = DateComponents(year: self.yearToInt, month: self.monthToInt)
+        return cal.date(from: dateComponents) ?? Date()
+    }
+
+    var lastDay: Date {
+        let cal = Calendar.current
+        let nextMonth = cal.date(byAdding: .month, value: 1, to: firstDay) ?? self
+        let endOfMonth = cal.date(byAdding: .day, value: -1, to: nextMonth) ?? self
+        return endOfMonth
+    }
+}
+
+/// SelectedDate 받아서 달력에 들어갈 날짜를 [Date?]로 계산해줌
+/// 1일 이전 빈칸은 nil
+/// 각 날짜 0시 정각
+extension Date {
+    var daysOfMonth: [Date?] {
+        var days: [Date?] = []
+        var day = self.firstDay
+        
+        for _ in 1..<self.firstDay.weekdayToInt {
+            days.append(nil)
+        }
+        while day <= lastDay {
+            days.append(day)
+            day = Calendar.current.date(byAdding: .day, value: 1, to: day) ?? lastDay
+        }
+        return days
+    }
+}

@@ -36,9 +36,6 @@ func getMonthlyPeriod() -> [String] {
     return monthlyPeriod
 }
 
-var dailyOptions: [Double] = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
-var monthlyOptions: [Double] = [80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340, 360, 380, 400, 420]
-
 struct PullToRefresh: View {
     var coordinateSpaceName: String
     var onRefresh: () -> Void
@@ -73,15 +70,19 @@ struct PullToRefresh: View {
 }
 
 struct HomeView: View {
-    init() {
+    init(fundInfo: Binding<Bool>, tagLatencyInfo: Binding<Bool>) {
         UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(Color.gradientPurple)
-          UIPageControl.appearance().pageIndicatorTintColor = UIColor.gray.withAlphaComponent(0.2)
+        UIPageControl.appearance().pageIndicatorTintColor = UIColor.gray.withAlphaComponent(0.2)
+
+        self._isNoticedFundInfo = fundInfo
+        self._isNoticedTagLatencyInfo = tagLatencyInfo
     }
     @State var test: Bool = true
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var hane: Hane
-    @AppStorage("DailySelectionOption") private var dailySelectionOption =  UserDefaults.standard.integer(forKey: "DailySelectionOption")
-    @AppStorage("MonthlySelectionOption") private var monthlySelectionOption =  UserDefaults.standard.integer(forKey: "MonthlySelectionOption")
+
+    @Binding var isNoticedFundInfo: Bool
+    @Binding var isNoticedTagLatencyInfo: Bool
 
     var body: some View {
         NavigationView {
@@ -132,16 +133,6 @@ struct HomeView: View {
                         }
 
                         Spacer()
-
-                        NavigationLink(destination: NotificationView()) {
-                            Image("notification")
-                                .resizable()
-                                .frame(width: 24, height: 24)
-                                .foregroundColor(test ? .iconColor : .red)
-                        }
-                        .hidden()
-                        .navigationBarHidden(true)
-                        .frame(width: 24, height: 24)
                     }
                     .padding(.top, 20)
                     .frame(height: 30)
@@ -149,33 +140,16 @@ struct HomeView: View {
 
                     ScrollView {
                         PullToRefresh(coordinateSpaceName: "pullToRefresh") {
-                            /// [FixMe]
                             Task {
-                                try await hane.refresh(date: Date())
+                                try await hane.refresh()
                             }
                         }
 
                         VStack(spacing: 22.5) {
-                            AccTimeCardView(
-                                text: "이용 시간",
-                                accTime: hane.dailyAccumulationTime,
-                                options: dailyOptions,
-                                select: dailySelectionOption
-                            ) { selection in
-                                UserDefaults.standard.setValue(selection, forKey: "DailySelectionOption")
-                            }
+                            TodayAccTimeCardView(isNoticed: $isNoticedFundInfo)
                                 .padding(.horizontal, 30)
 
-                            AccTimeCardView(
-                                text: "월 누적 시간",
-                                accTime: hane.monthlyAccumulationTime,
-                                isColored: true,
-                                viewColor: Color(hex: "#735BF2"),
-                                options: monthlyOptions,
-                                select: monthlySelectionOption
-                            ) { selection in
-                                UserDefaults.standard.setValue(selection, forKey: "MonthlySelectionOption")
-                            }
+                            ThisMonthAccTimeCardView(isNoticed: $isNoticedTagLatencyInfo)
                                 .padding(.horizontal, 30)
 
                             TabView {
@@ -203,6 +177,6 @@ struct HomeView: View {
 }
 
 #Preview {
-    HomeView()
+    HomeView(fundInfo: .constant(false), tagLatencyInfo: .constant(false))
         .environmentObject(Hane())
 }
